@@ -12,7 +12,6 @@ import sk.itsovy.strausz.repository.UserRepository;
 
 import java.sql.PreparedStatement;
 import java.util.List;
-import java.util.Random;
 
 
 @RestController
@@ -110,7 +109,7 @@ public class UserController {
                 boolean check = userRepository.loginUser(user);
                 System.out.println(check);
                 if (check) {
-                    String token = generateToken();
+                    String token = UserRepository.generateToken();
 
                     user.setToken(token);
 
@@ -181,12 +180,7 @@ public class UserController {
 
 
 
-    private static String generateToken() {
-        Random rand = new Random();
-        long longToken = Math.abs(rand.nextLong());
 
-        return Long.toString(longToken, 16);
-    }
 
 
 

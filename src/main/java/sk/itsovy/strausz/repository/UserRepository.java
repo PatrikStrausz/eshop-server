@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Repository
 @CrossOrigin(origins = "*")
@@ -168,6 +169,15 @@ public class UserRepository {
         }
 
     }
+
+
+    public static String generateToken() {
+        Random rand = new Random();
+        long longToken = Math.abs(rand.nextLong());
+
+        return Long.toString(longToken, 16);
+    }
+
 
     public boolean checkUsername(String login){
 
