@@ -6,10 +6,7 @@ import sk.itsovy.strausz.Database;
 import sk.itsovy.strausz.model.Orders;
 import sk.itsovy.strausz.model.Products;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +34,7 @@ public class OrdersRepository {
                 ordersList.add(order);
 
             }
+            Database.getConnection().close();
         }catch (SQLException e) {
             e.printStackTrace();
         }
@@ -57,13 +55,14 @@ public class OrdersRepository {
                 order.setUser_id(rs.getInt("user_id"));
 
             }
+            Database.getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return order;
     }
 
-    public boolean createOrder(Orders order, Products product){
+    public boolean createOrder(Orders order, List<Products> products){
       try{
 
           PreparedStatement statement = Database.getConnection().prepareStatement(
@@ -84,10 +83,17 @@ public class OrdersRepository {
 
           ResultSet id = statement.getGeneratedKeys();
 
+
+
           if(id.next()){
               statement2.setInt(1, id.getInt(1));
-              statement2.setInt(2, product.getId());
-              statement2.setInt(3, product.getQuantity());
+
+
+              for(Products p:products) {
+                  statement2.setInt(2, p.getId());
+                  statement2.setInt(3, p.getQuantity());
+              }
+
           }
 
 
@@ -101,6 +107,8 @@ public class OrdersRepository {
                   return true;
               }
           }
+
+          Database.getConnection().close();
 
       }catch (SQLException e) {
           e.printStackTrace();

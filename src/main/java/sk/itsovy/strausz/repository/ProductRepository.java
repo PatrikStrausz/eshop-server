@@ -3,6 +3,7 @@ package sk.itsovy.strausz.repository;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import sk.itsovy.strausz.Database;
+import sk.itsovy.strausz.model.Categories;
 import sk.itsovy.strausz.model.Products;
 
 import java.sql.PreparedStatement;
@@ -42,6 +43,7 @@ public class ProductRepository {
                 productsList.add(product);
 
             }
+            Database.getConnection().close();
         }catch (SQLException e) {
             e.printStackTrace();
         }
@@ -70,10 +72,36 @@ public class ProductRepository {
                 product.setShort_desc(rs.getString("short_desc"));
                 product.setCat_id(rs.getInt("cat_id"));
             }
+            Database.getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return product;
+    }
+
+    public Categories getCategoryName(int product_id){
+        Categories categorie = new Categories();
+
+        try {
+
+            PreparedStatement statement = Database.getConnection().prepareStatement("select * from categories inner join products on categories.id = products.cat_id where products.id = ?");
+            statement.setInt(1, product_id);
+            ResultSet rs = statement.executeQuery();
+
+
+            while (rs.next()) {
+
+
+                categorie.setId(rs.getInt("id"));
+                categorie.setTitle(rs.getString("title"));
+
+            }
+            Database.getConnection().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return categorie;
+
     }
 
 }

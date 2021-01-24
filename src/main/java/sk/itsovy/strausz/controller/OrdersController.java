@@ -1,5 +1,6 @@
 package sk.itsovy.strausz.controller;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,7 @@ import sk.itsovy.strausz.model.Orders;
 import sk.itsovy.strausz.model.Products;
 import sk.itsovy.strausz.repository.OrdersRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -42,18 +44,37 @@ public class OrdersController {
         JSONObject response = new JSONObject();
        Orders order = new Orders();
 
+        List<Products> productsList = new ArrayList<>();
+
         Products product = new Products();
 
         try {
             System.out.println("BODY: \n" + body);
             JSONObject json = new JSONObject(body);
+            JSONArray jsonArr = json.getJSONArray("products");
             response = new JSONObject();
+
 
             order.setUser_id(json.getInt("user_id"));
 
-            product.setId(json.getInt("product_id"));
-            product.setQuantity(json.getInt("quantity"));
-            boolean check = ordersRepository.createOrder(order, product);
+
+
+
+            for(int i =0; i< jsonArr.length(); i++){
+                JSONObject jsons = jsonArr.getJSONObject(i);
+                if(jsons.has("quantity") && jsons.has("product_id")) {
+                    product.setId(jsons.getInt("product_id"));
+                    product.setQuantity(jsons.getInt("quantity"));
+                }
+            }
+
+
+
+
+            productsList.add(product);
+
+
+            boolean check = ordersRepository.createOrder(order, productsList);
             if (check) {
                 response.put("success", "Order created");
                 return ResponseEntity.status(200).body(response.toString());
@@ -66,4 +87,22 @@ public class OrdersController {
         return null;
 
     };
+
+    @PostMapping("/orders/payment")
+    public ResponseEntity<?> createOrder() {
+
+        JSONObject response = new JSONObject();
+
+        try{
+            Thread.sleep(3000);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        response.put("success", "Payment");
+        return ResponseEntity.status(200).body(response.toString());
+
+     }
+
 }

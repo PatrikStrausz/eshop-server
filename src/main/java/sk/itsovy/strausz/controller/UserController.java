@@ -35,6 +35,112 @@ public class UserController {
         return userRepository.getUserById(id);
     }
 
+
+    @GetMapping(path = "/users/name/{username}")
+    public Users getUserByUsername( @PathVariable String username){
+        return userRepository.getUserByUsername(username);
+    }
+
+    @PostMapping(value = "/user/edit")
+    public ResponseEntity<?> updateUser(@RequestBody String body){
+
+
+        JSONObject response = new JSONObject();
+        Users user = new Users();
+
+        try {
+
+
+
+            System.out.println("BODY: \n" + body);
+            JSONObject json = new JSONObject(body);
+            response = new JSONObject();
+
+
+                user.setUsername(json.getString("username"));
+                user.setPassword(json.getString("password"));
+                user.setEmail(json.getString("email"));
+                user.setId(json.getInt("id"));
+
+
+                if(userRepository.checkUsername(user.getUsername())) {
+                    if (userRepository.checkEmail(user.getEmail())) {
+                        boolean check = userRepository.updateUser(user);
+                        if (check) {
+
+
+                            response.put("success", "User updated");
+                            return ResponseEntity.status(200).body(response.toString());
+
+
+                        }
+                    } else {
+                        response.put("error", "Email already exists");
+                        return ResponseEntity.status(400).body(response.toString());
+                    }
+                }
+                else {
+                    response.put("error", "Username already exists");
+                    return ResponseEntity.status(400).body(response.toString());
+                }
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("error", "User not created");
+            return ResponseEntity.status(400).body(response.toString());
+        }
+
+            response.put("error", "Username, password or email is missing");
+            return ResponseEntity.status(400).body(response.toString());
+
+
+    }
+
+    @PostMapping(value = "/user-conflicts")
+    public ResponseEntity<?> userConflicts(@RequestBody String body){
+        JSONObject response = new JSONObject();
+        Users user = new Users();
+
+        try {
+
+
+
+            System.out.println("BODY: \n" + body);
+            JSONObject json = new JSONObject(body);
+
+
+
+                user.setUsername(json.getString("username"));
+                user.setEmail(json.getString("email"));
+                user.setPassword(json.getString("password"));
+
+
+
+           if (userRepository.checkUserConflicts(user)){
+
+               response.put("success", "User successfully updated");
+               return ResponseEntity.status(200).body(response.toString());
+
+            }else {
+
+               response.put("error", "Email or username already exists");
+               return ResponseEntity.status(400).body(response.toString());
+           }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+
+        }
+        response.put("error", "Email or username already exists");
+        return ResponseEntity.status(400).body(response.toString());
+
+
+
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody String body){
 
@@ -127,8 +233,8 @@ public class UserController {
 
 
 
-                    response.put("success", "User logged in \n Your token: " + user.getToken());
-                    return ResponseEntity.status(200).body(response.toString());
+
+                    return ResponseEntity.status(200).body(user.getToken());
                 }
             }else {
                 response.put("error", "Username and password are mandatory fields");
@@ -152,10 +258,14 @@ public class UserController {
         JSONObject json = new JSONObject(body);
         JSONObject result = new JSONObject();
 
+        System.out.println("Logout BODY: \n" + body+"\n Token: " + token+"\n");
+
         String login = json.getString("username");
+
 
         Users user = new Users() ;
         user.setUsername(login);
+
 
         if(user.getUsername()==null){
             result.put("error", "Login do not exist in database");

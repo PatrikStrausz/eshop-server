@@ -37,6 +37,7 @@ public class UserRepository {
                 users.add(user);
 
             }
+            Database.getConnection().close();
         }catch (SQLException e) {
             e.printStackTrace();
         }
@@ -64,11 +65,42 @@ public class UserRepository {
                 user.setRole(rs.getInt("role"));
 
             }
+            Database.getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return user;
     }
+
+
+
+
+    public Users getUserByUsername(String  username) {
+
+        Users user = new Users();
+
+        try {
+
+            PreparedStatement statement = Database.getConnection().prepareStatement("select * from users where username =  ?");
+            statement.setString(1, username);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                user.setId(rs.getInt("id"));
+                user.setEmail(rs.getString("email"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setRole(rs.getInt("role"));
+
+            }
+            Database.getConnection().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+
+
 
     public boolean registerUser(Users user) {
         try{
@@ -96,6 +128,7 @@ public class UserRepository {
                     return true;
 
             }
+            Database.getConnection().close();
 
         }catch (SQLException e) {
             e.printStackTrace();
@@ -104,6 +137,62 @@ public class UserRepository {
     }
 
 
+    public boolean updateUser(Users user){
+        try{
+
+            PreparedStatement statement = Database.getConnection().prepareStatement(
+                    "update users set username =?, email =?, password =? where id = ?");
+
+
+
+            statement.setString(1, user.getUsername());
+            statement.setString(3, user.getPassword());
+            statement.setString(2, user.getEmail());
+            statement.setInt(4, user.getId());
+
+
+
+
+            int executeUpdate = statement.executeUpdate();
+
+            System.out.println(executeUpdate);
+
+            if (executeUpdate == 1) {
+
+                System.out.println("User is updated: " +
+                        user.getId() + " " + user.getUsername());
+                return true;
+
+            }
+            Database.getConnection().close();
+
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+
+    }
+
+
+    public boolean checkUserConflicts(Users user){
+        if(checkUsername(user.getUsername())){
+            if(checkEmail(user.getEmail())){
+
+
+
+               return true;
+
+            }else{
+                return false;
+            }
+
+        }
+        else{
+            return false;
+        }
+
+
+    }
 
 
     public boolean loginUser(Users user) {
@@ -131,6 +220,7 @@ public class UserRepository {
 
                 return true;
             }
+            Database.getConnection().close();
 
         }catch (SQLException e) {
             e.printStackTrace();
@@ -163,6 +253,7 @@ public class UserRepository {
 
 
             }
+            Database.getConnection().close();
 
         }catch (SQLException e) {
             e.printStackTrace();
@@ -196,6 +287,35 @@ public class UserRepository {
                     return true;
                 }
             }
+            Database.getConnection().close();
+        }catch (Exception e){
+            e.printStackTrace();
+
+        }
+        return false;
+
+    }
+
+    public boolean checkEmail(String email){
+
+        try{
+            final String queryCheck = "SELECT count(*) from users WHERE email = ?";
+            final PreparedStatement ps = Database.getConnection().prepareStatement(queryCheck);
+            ps.setString(1, email);
+            final ResultSet resultSet = ps.executeQuery();
+            if(resultSet.next()) {
+                final int count = resultSet.getInt(1);
+
+                System.out.println("Email count " + count);
+
+
+                if(count >= 1){
+                    return false;
+                }else{
+                    return true;
+                }
+            }
+            Database.getConnection().close();
         }catch (Exception e){
             e.printStackTrace();
 
@@ -221,6 +341,7 @@ public class UserRepository {
                     return false;
                 }
             }
+            Database.getConnection().close();
         }catch (Exception e){
             e.printStackTrace();
 

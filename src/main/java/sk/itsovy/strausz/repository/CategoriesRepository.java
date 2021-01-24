@@ -36,10 +36,14 @@ public class CategoriesRepository {
 
                 categoriesList.add(categorie);
 
+
+
             }
+            Database.getConnection().close();
         }catch (SQLException e) {
             e.printStackTrace();
         }
+
 
         return categoriesList;
     }
@@ -56,7 +60,10 @@ public class CategoriesRepository {
                 categorie.setId(rs.getInt("id"));
                 categorie.setTitle(rs.getString("title"));
 
+
+
             }
+            Database.getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
