@@ -194,26 +194,24 @@ public class UserRepository {
 
     }
 
-
-    public boolean loginUser(Users user) {
+    public boolean deleteUser(Users user){
         try{
 
             PreparedStatement statement = Database.getConnection().prepareStatement(
-                    "select * from users where username = ? and password = ?");
+                    "delete from users where id =? and password =?");
 
 
 
-            statement.setString(1, user.getUsername());
+            statement.setInt(1, user.getId());
             statement.setString(2, user.getPassword());
 
 
 
 
-            boolean executeUpdate = statement.execute();
+            int executeUpdate = statement.executeUpdate();
 
-            if (executeUpdate ) {
-                System.out.println("Login successful: " +
-                        user.getId() + " " + user.getUsername());
+            if (executeUpdate == 1 ) {
+                System.out.println("User deleted: " + user.getId() );
 
 
 
@@ -225,7 +223,18 @@ public class UserRepository {
         }catch (SQLException e) {
             e.printStackTrace();
         }
+
         return false;
+    }
+
+
+    public boolean loginUser(Users user) {
+
+        if(checkPassword(user.getPassword(), user.getUsername())){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 
@@ -239,6 +248,8 @@ public class UserRepository {
 
             statement.setString(1, "");
             statement.setString(2, username);
+
+
 
 
 
@@ -270,6 +281,8 @@ public class UserRepository {
     }
 
 
+
+
     public boolean checkUsername(String login){
 
         try{
@@ -295,6 +308,40 @@ public class UserRepository {
         return false;
 
     }
+
+
+    public boolean checkPassword(String password, String username){
+
+        try{
+            final String queryCheck = "SELECT count(*) from users WHERE password = ? and username =?";
+            final PreparedStatement ps = Database.getConnection().prepareStatement(queryCheck);
+            ps.setString(1, password);
+            ps.setString(2, username);
+            final ResultSet resultSet = ps.executeQuery();
+            if(resultSet.next()) {
+                final int count = resultSet.getInt(1);
+
+
+                System.out.println("Count:" + count);
+                if(count >= 1){
+
+
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+            Database.getConnection().close();
+        }catch (Exception e){
+            e.printStackTrace();
+
+        }
+        return false;
+
+    }
+
+
+
 
     public boolean checkEmail(String email){
 

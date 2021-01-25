@@ -141,6 +141,51 @@ public class UserController {
 
     }
 
+    @PostMapping("/user/delete")
+    public ResponseEntity<?> deleteUser(@RequestBody String body){
+
+        JSONObject response = new JSONObject();
+        Users user = new Users();
+
+        try {
+
+
+
+            System.out.println("BODY: \n" + body);
+            JSONObject json = new JSONObject(body);
+            response = new JSONObject();
+
+            if(json.has("id") && json.has("password")) {
+
+                user.setId(json.getInt("id"));
+                user.setPassword(json.getString("password"));
+
+
+                    boolean check = userRepository.deleteUser(user);
+                    if (check) {
+
+
+                        response.put("success", "User deleted");
+                        return ResponseEntity.status(200).body(response.toString());
+
+
+                    }
+
+
+
+            }
+            response.put("error", "Id or password  is missing");
+            return ResponseEntity.status(400).body(response.toString());
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+        response.put("error", "User not deleted");
+        return ResponseEntity.status(400).body(response.toString());
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody String body){
 
@@ -205,38 +250,43 @@ public class UserController {
             response = new JSONObject();
 
 
-            if(json.has("username") && json.has("password")){
+            if(json.has("username") && json.has("password")) {
 
 
                 user.setUsername(json.getString("username"));
                 user.setPassword(json.getString("password"));
 
 
-                boolean check = userRepository.loginUser(user);
-                System.out.println(check);
-                if (check) {
-                    String token = UserRepository.generateToken();
 
-                    user.setToken(token);
+                if (userRepository.checkPassword(user.getPassword(),user.getUsername())) {
 
+                    boolean check = userRepository.loginUser(user);
 
+                    if (check) {
 
-                    PreparedStatement statement = Database.getConnection().prepareStatement(
-                            "update users set token = ? where password = ? and username =?");
+                        String token = UserRepository.generateToken();
 
-                    statement.setString(1,user.getToken());
-                    statement.setString(2,user.getPassword());
-
-                    statement.setString(3,user.getUsername());
-
-                    statement.executeUpdate();
+                        user.setToken(token);
 
 
+                        PreparedStatement statement = Database.getConnection().prepareStatement(
+                                "update users set token = ? where password = ? and username =?");
+
+                        statement.setString(1, user.getToken());
+                        statement.setString(2, user.getPassword());
+
+                        statement.setString(3, user.getUsername());
+
+                        statement.executeUpdate();
 
 
-                    return ResponseEntity.status(200).body(user.getToken());
+                        return ResponseEntity.status(200).body(user.getToken());
+                    }
+                } else {
+                    response.put("error", "Wrong username");
+                    return ResponseEntity.status(400).body(response.toString());
                 }
-            }else {
+            }else{
                 response.put("error", "Username and password are mandatory fields");
                 return ResponseEntity.status(400).body(response.toString());
             }

@@ -43,6 +43,11 @@ public class ProductController {
         return productRepository.getCategoryName(id);
     }
 
+    @RequestMapping(value = "/list/products/category/{id}", method=RequestMethod.GET)
+    public List<Products> getProductsByCategory(@PathVariable int id){
+        return productRepository.getProductsByCategory(id);
+    }
+
 
 
 

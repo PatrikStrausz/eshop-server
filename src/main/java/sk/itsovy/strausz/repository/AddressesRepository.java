@@ -120,4 +120,42 @@ public class AddressesRepository {
         return address;
 
     }
+
+
+    public boolean updateUserAddress(Addresses address){
+
+
+
+
+        try{
+            PreparedStatement statement = Database.getConnection().prepareStatement("update addresses set line1 =?, city =?, state = ?,country =?, phone = ?, pincode = ?, user_id =?  where user_id = ?");
+
+            statement.setString(1,address.getLine1());
+            statement.setString(2,address.getCity());
+            statement.setString(3,address.getState());
+            statement.setString(4,address.getCountry());
+            statement.setString(5,address.getPhone());
+            statement.setInt(6,address.getPincode());
+            statement.setInt(7,address.getUser_id());
+            statement.setInt(8,address.getUser_id());
+
+            int executeUpdate = statement.executeUpdate();
+
+            System.out.println(executeUpdate);
+
+            if (executeUpdate == 1) {
+
+                System.out.println("Address is updated: " +
+                        address.getId() + " " + address.getUser_id());
+                return true;
+
+            }
+            Database.getConnection().close();
+
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+
+    }
 }
