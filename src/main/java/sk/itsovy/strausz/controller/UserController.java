@@ -208,16 +208,21 @@ public class UserController {
                 user.setToken("");
 
                 if(userRepository.checkUsername(user.getUsername())){
-                    boolean check = userRepository.registerUser(user);
-                    if (check) {
+                    if(userRepository.checkEmail(user.getEmail())) {
+                        boolean check = userRepository.registerUser(user);
+                        if (check) {
 
 
-                        response.put("success", "User created");
-                        return ResponseEntity.status(200).body(response.toString());
+                            response.put("success", "User created");
+                            return ResponseEntity.status(200).body(response.toString());
 
 
-                    } else {
-                        response.put("error", "Username, password or email is missing");
+                        } else {
+                            response.put("error", "Username, password or email is missing");
+                            return ResponseEntity.status(400).body(response.toString());
+                        }
+                    }else{
+                        response.put("error", "Email already exists");
                         return ResponseEntity.status(400).body(response.toString());
                     }
                 }else{

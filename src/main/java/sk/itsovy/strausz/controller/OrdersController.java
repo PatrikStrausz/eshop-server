@@ -9,6 +9,8 @@ import sk.itsovy.strausz.model.Orders;
 import sk.itsovy.strausz.model.Products;
 import sk.itsovy.strausz.repository.OrdersRepository;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +40,15 @@ public class OrdersController {
     }
 
 
+    @RequestMapping(value = "/orders/username/{username}", method= RequestMethod.GET)
+    public List<Orders> getAllOrdersByUsername(@PathVariable String username){
+
+        return ordersRepository.getAllOrdersByUsername(username);
+
+
+    }
+
+
     @PostMapping("/orders/new")
     public ResponseEntity<?> createOrder(@RequestBody String body){
 
@@ -52,10 +63,25 @@ public class OrdersController {
             System.out.println("BODY: \n" + body);
             JSONObject json = new JSONObject(body);
             JSONArray jsonArr = json.getJSONArray("products");
+            JSONObject jsonOrder = json.getJSONObject("order");
             response = new JSONObject();
 
 
-            order.setUser_id(json.getInt("user_id"));
+
+
+
+
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            String date = sdf.format(timestamp);
+
+            order.setOrder_created(date);
+
+            System.out.println(date);
+
+
 
 
 
@@ -67,6 +93,17 @@ public class OrdersController {
                     product.setQuantity(jsons.getInt("quantity"));
                 }
             }
+            String username = json.getString("username");
+
+
+
+
+                    order.setUser_id(json.getInt("user_id"));
+                    order.setState(false);
+                    order.setTotal(jsonOrder.getDouble("total"));
+                    order.setUsername(username);
+
+
 
 
 
@@ -74,7 +111,7 @@ public class OrdersController {
             productsList.add(product);
 
 
-            boolean check = ordersRepository.createOrder(order, productsList);
+            boolean check = ordersRepository.createOrder(order, productsList,username );
             if (check) {
                 response.put("success", "Order created");
                 return ResponseEntity.status(200).body(response.toString());
@@ -92,7 +129,6 @@ public class OrdersController {
     public ResponseEntity<?> createOrder() {
 
         JSONObject response = new JSONObject();
-
         try{
             Thread.sleep(3000);
 
@@ -100,7 +136,7 @@ public class OrdersController {
             e.printStackTrace();
         }
 
-        response.put("success", "Payment");
+        response.put("success", true);
         return ResponseEntity.status(200).body(response.toString());
 
      }
