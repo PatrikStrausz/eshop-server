@@ -146,4 +146,35 @@ public class ProductRepository {
 
     }
 
+    public boolean deleteProduct(Products product) {
+        try{
+
+            PreparedStatement statement = Database.getConnection().prepareStatement(
+                    "delete from products where id =? ");
+
+
+
+            statement.setInt(1, product.getId());
+
+
+
+
+            int executeUpdate = statement.executeUpdate();
+
+            if (executeUpdate == 1 ) {
+                System.out.println("Product deleted: " + product.getId() );
+
+
+
+
+                return true;
+            }
+            Database.getConnection().close();
+
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 }
