@@ -16,18 +16,18 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class ProductRepository {
 
-    public List<Products> getAllProducts(){
+    public List<Products> getAllProducts() {
         Products product;
 
         List<Products> productsList = new ArrayList<>();
 
-        try{
+        try {
             PreparedStatement statement = Database.getConnection().prepareStatement("select * from products");
             ResultSet rs = statement.executeQuery();
 
 
-            while (rs.next()){
-                product= new Products();
+            while (rs.next()) {
+                product = new Products();
                 product.setId(rs.getInt("id"));
                 product.setTitle(rs.getString("title"));
                 product.setImage(rs.getString("image"));
@@ -39,12 +39,11 @@ public class ProductRepository {
                 product.setCat_id(rs.getInt("cat_id"));
 
 
-
                 productsList.add(product);
 
             }
             Database.getConnection().close();
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -53,7 +52,7 @@ public class ProductRepository {
     }
 
 
-    public Products getProductById(int id ){
+    public Products getProductById(int id) {
         Products product = new Products();
 
         try {
@@ -79,7 +78,7 @@ public class ProductRepository {
         return product;
     }
 
-    public Categories getCategoryName(int product_id){
+    public Categories getCategoryName(int product_id) {
         Categories categorie = new Categories();
 
         try {
@@ -105,14 +104,12 @@ public class ProductRepository {
     }
 
 
-
-
-    public List<Products> getProductsByCategory(int id){
+    public List<Products> getProductsByCategory(int id) {
         Products product;
 
         List<Products> productsList = new ArrayList<>();
 
-        try{
+        try {
             PreparedStatement statement = Database.getConnection().prepareStatement("select * from products where cat_id = ?");
 
             statement.setInt(1, id);
@@ -120,8 +117,8 @@ public class ProductRepository {
             ResultSet rs = statement.executeQuery();
 
 
-            while (rs.next()){
-                product= new Products();
+            while (rs.next()) {
+                product = new Products();
                 product.setId(rs.getInt("id"));
                 product.setTitle(rs.getString("title"));
                 product.setImage(rs.getString("image"));
@@ -133,12 +130,11 @@ public class ProductRepository {
                 product.setCat_id(rs.getInt("cat_id"));
 
 
-
                 productsList.add(product);
 
             }
             Database.getConnection().close();
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -147,34 +143,107 @@ public class ProductRepository {
     }
 
     public boolean deleteProduct(Products product) {
-        try{
+        try {
 
             PreparedStatement statement = Database.getConnection().prepareStatement(
                     "delete from products where id =? ");
 
 
-
             statement.setInt(1, product.getId());
-
-
 
 
             int executeUpdate = statement.executeUpdate();
 
-            if (executeUpdate == 1 ) {
-                System.out.println("Product deleted: " + product.getId() );
-
-
+            if (executeUpdate == 1) {
+                System.out.println("Product deleted: " + product.getId());
 
 
                 return true;
             }
             Database.getConnection().close();
 
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
+        return false;
+    }
+
+    public boolean updateProduct(Products product) {
+        try{
+
+            PreparedStatement statement = Database.getConnection().prepareStatement(
+                    "update products set title =?, image =?, images =? , description = ?, price =?, quantity=?, short_desc=?where id = ?");
+
+
+
+            statement.setString(1, product.getTitle());
+            statement.setString(2, product.getImage());
+            statement.setString(3, product.getImages());
+            statement.setString(4, product.getDescription());
+            statement.setDouble(5, product.getPrice());
+            statement.setInt(6, product.getQuantity());
+            statement.setString(7, product.getShort_desc());
+            statement.setInt(8, product.getId());
+
+
+
+
+
+
+
+
+            int executeUpdate = statement.executeUpdate();
+
+            System.out.println(executeUpdate);
+
+            if (executeUpdate == 1) {
+
+                System.out.println("Product is updated: " +
+                        product.getId() + " " + product.getTitle());
+                return true;
+
+            }
+            Database.getConnection().close();
+
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    public boolean createProduct(Products product){
+        try {
+
+            PreparedStatement statement = Database.getConnection().prepareStatement(
+                    "INSERT INTO `products`( title,image,images, description, price,quantity, short_desc, cat_id) VALUES (?,?,?,?,?,?,?,?)");
+
+
+            statement.setString(1, product.getTitle());
+            statement.setString(2, product.getImage());
+            statement.setString(3, product.getImages());
+            statement.setString(4, product.getDescription());
+            statement.setDouble(5, product.getPrice());
+            statement.setInt(6, product.getQuantity());
+            statement.setString(7, product.getShort_desc());
+            statement.setInt(8, product.getCat_id());
+
+
+            int executeUpdate = statement.executeUpdate();
+
+            if (executeUpdate == 1) {
+
+                System.out.println("Product is created: " +
+                        product.getId() + " " + product.getTitle());
+                return true;
+
+            }
+            Database.getConnection().close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 }
