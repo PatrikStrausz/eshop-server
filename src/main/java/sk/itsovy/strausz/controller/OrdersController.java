@@ -141,4 +141,47 @@ public class OrdersController {
 
      }
 
+    @PostMapping(value = "/order/edit")
+    public ResponseEntity<?> updateOrder(@RequestBody String body){
+
+
+        JSONObject response = new JSONObject();
+        Orders order = new Orders();
+
+        try {
+
+
+
+            System.out.println("BODY: \n" + body);
+            JSONObject json = new JSONObject(body);
+            response = new JSONObject();
+
+
+           order.setState(json.getBoolean("state"));
+
+
+                    boolean check = ordersRepository.updateOrder(order);
+                    if (check) {
+
+
+                        response.put("success", "Order updated");
+                        return ResponseEntity.status(200).body(response.toString());
+
+                    }
+
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+        response.put("error", "Order not created");
+        return ResponseEntity.status(400).body(response.toString());
+
+
+    }
+
+
 }

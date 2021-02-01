@@ -182,4 +182,35 @@ public class OrdersRepository {
       return false;
     }
 
+
+    public boolean updateOrder(Orders order) {
+        try {
+
+            PreparedStatement statement = Database.getConnection().prepareStatement(
+                    "update orders set state = ?");
+
+
+            statement.setBoolean(1, order.isState());
+
+            int executeUpdate = statement.executeUpdate();
+
+            System.out.println(executeUpdate);
+
+            if (executeUpdate == 1) {
+
+                System.out.println("Order is updated: " +
+                        order.getId() + " " + order.getOrder_created());
+                return true;
+
+            }
+            Database.getConnection().close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+
+    }
+
+
 }
