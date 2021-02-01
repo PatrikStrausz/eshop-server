@@ -187,10 +187,11 @@ public class OrdersRepository {
         try {
 
             PreparedStatement statement = Database.getConnection().prepareStatement(
-                    "update orders set state = ?");
+                    "update orders set state = ? where id = ?");
 
 
             statement.setBoolean(1, order.isState());
+            statement.setInt(2, order.getId());
 
             int executeUpdate = statement.executeUpdate();
 

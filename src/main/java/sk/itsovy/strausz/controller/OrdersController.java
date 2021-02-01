@@ -141,7 +141,7 @@ public class OrdersController {
 
      }
 
-    @PostMapping(value = "/order/edit")
+    @PostMapping(value = "/orders/edit")
     public ResponseEntity<?> updateOrder(@RequestBody String body){
 
 
@@ -158,6 +158,7 @@ public class OrdersController {
 
 
            order.setState(json.getBoolean("state"));
+           order.setId(json.getInt("id"));
 
 
                     boolean check = ordersRepository.updateOrder(order);
