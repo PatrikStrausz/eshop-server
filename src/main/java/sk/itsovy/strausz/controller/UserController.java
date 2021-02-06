@@ -288,7 +288,7 @@ public class UserController {
                         return ResponseEntity.status(200).body(user.getToken());
                     }
                 } else {
-                    response.put("error", "Wrong username");
+                    response.put("error", "Wrong username or password");
                     return ResponseEntity.status(400).body(response.toString());
                 }
             }else{
@@ -299,10 +299,10 @@ public class UserController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            response.put("error", "User not logged");
-            return ResponseEntity.status(400).body(response.toString());
+
         }
-        return null;
+        response.put("error", "User not logged");
+        return ResponseEntity.status(400).body(response.toString());
 
     };
 

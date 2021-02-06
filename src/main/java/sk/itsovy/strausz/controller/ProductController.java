@@ -95,6 +95,8 @@ public class ProductController {
             product.setPrice(json.getDouble("price"));
 //            product.setCat_id(json.getInt("cat_id"));
 
+            System.out.println(">>>>>IMAGE "+ json.getString("image"));
+
 
             boolean check = productRepository.updateProduct(product);
             if (check) {
