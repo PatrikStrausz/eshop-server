@@ -139,6 +139,10 @@ public class ProductController {
         return productRepository.getProductsByCategory(id);
     }
 
+    @GetMapping(value = "/list/products/title/{title}")
+    public List<Products> getProductsByTitle(@PathVariable String title){
+        return productRepository.getProductsByTitle(title);
+    }
 
     @PostMapping(value = "/products/add")
     public ResponseEntity<?> createProduct(@RequestBody String body) {

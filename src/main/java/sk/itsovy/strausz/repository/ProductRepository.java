@@ -142,6 +142,48 @@ public class ProductRepository {
 
     }
 
+
+    public List<Products> getProductsByTitle(String title) {
+        Products product;
+
+        List<Products> productsList = new ArrayList<>();
+
+        try {
+            PreparedStatement statement = Database.getConnection().prepareStatement("select * from products where title like ?");
+
+            statement.setString(1, title+"%");
+
+            ResultSet rs = statement.executeQuery();
+
+
+            while (rs.next()) {
+                product = new Products();
+                product.setId(rs.getInt("id"));
+                product.setTitle(rs.getString("title"));
+                product.setImage(rs.getString("image"));
+                product.setImages(rs.getString("images"));
+                product.setDescription(rs.getString("description"));
+                product.setPrice(rs.getDouble("price"));
+                product.setQuantity(rs.getInt("quantity"));
+                product.setShort_desc(rs.getString("short_desc"));
+                product.setCat_id(rs.getInt("cat_id"));
+
+
+                productsList.add(product);
+
+            }
+            Database.getConnection().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+        return productsList;
+
+    }
+
+
+
     public boolean deleteProduct(Products product) {
         try {
 
