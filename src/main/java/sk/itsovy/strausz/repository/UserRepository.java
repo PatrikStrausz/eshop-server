@@ -133,23 +133,23 @@ public class UserRepository {
         try {
 
             PreparedStatement statement = Database.getConnection().prepareStatement(
-                    "update users set username =?, email =?, password =? where id = ?");
+                    "update users set password =? where id = ?");
 
 
-            statement.setString(1, user.getUsername());
-            statement.setString(3, user.getPassword());
-            statement.setString(2, user.getEmail());
-            statement.setInt(4, user.getId());
+
+            statement.setString(1, user.getPassword());
+
+            statement.setInt(2, user.getId());
 
 
             int executeUpdate = statement.executeUpdate();
 
-            System.out.println(executeUpdate);
+
 
             if (executeUpdate == 1) {
 
                 System.out.println("User is updated: " +
-                        user.getId() + " " + user.getUsername());
+                        user.getId() + " " + user.getPassword());
                 return true;
 
             }

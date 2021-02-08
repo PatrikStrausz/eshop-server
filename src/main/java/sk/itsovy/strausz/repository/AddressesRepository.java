@@ -130,6 +130,9 @@ public class AddressesRepository {
         try{
             PreparedStatement statement = Database.getConnection().prepareStatement("update addresses set line1 =?, city =?, state = ?,country =?, phone = ?, pincode = ?, user_id =?  where user_id = ?");
 
+            PreparedStatement statement1 = Database.getConnection().prepareStatement("insert into addresses(line1,city,state,country,phone,pincode,user_id) values(?,?,?,?,?,?,?)");
+
+
             statement.setString(1,address.getLine1());
             statement.setString(2,address.getCity());
             statement.setString(3,address.getState());
@@ -139,9 +142,28 @@ public class AddressesRepository {
             statement.setInt(7,address.getUser_id());
             statement.setInt(8,address.getUser_id());
 
-            int executeUpdate = statement.executeUpdate();
 
+            statement1.setString(1,address.getLine1());
+            statement1.setString(2,address.getCity());
+            statement1.setString(3,address.getState());
+            statement1.setString(4,address.getCountry());
+            statement1.setString(5,address.getPhone());
+            statement1.setInt(6,address.getPincode());
+            statement1.setInt(7,address.getUser_id());
+
+
+            int executeUpdate = statement.executeUpdate();
             System.out.println(executeUpdate);
+
+
+            if(checkAddress(address.getUser_id())==0){
+                int executeInsert = statement1.executeUpdate();
+
+                if(executeInsert == 1){
+                    System.out.println("Address created");
+                }
+            }
+          else
 
             if (executeUpdate == 1) {
 
@@ -156,6 +178,59 @@ public class AddressesRepository {
             e.printStackTrace();
         }
         return false;
+
+    }
+
+    public boolean deleteAddress(int user_id){
+        try{
+            PreparedStatement statement = Database.getConnection().prepareStatement("delete from addresses where user_id=?");
+
+
+
+            statement.setInt(1,user_id);
+
+            int executeUpdate = statement.executeUpdate();
+
+
+
+
+            if (executeUpdate == 1) {
+
+                System.out.println("Address is deleted: ");
+                return true;
+
+            }
+            Database.getConnection().close();
+
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+
+
+    }
+
+    public int checkAddress(int user_id) {
+
+        try {
+            final String queryCheck = "SELECT count(*) from addresses WHERE user_id = ?";
+            final PreparedStatement ps = Database.getConnection().prepareStatement(queryCheck);
+            ps.setInt(1, user_id);
+            final ResultSet resultSet = ps.executeQuery();
+            if (resultSet.next()) {
+                final int count = resultSet.getInt(1);
+
+                System.out.println("Addresses count " + count);
+
+
+               return count;
+            }
+            Database.getConnection().close();
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+       return -1;
 
     }
 }

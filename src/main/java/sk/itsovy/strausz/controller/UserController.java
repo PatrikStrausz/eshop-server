@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sk.itsovy.strausz.Database;
 import sk.itsovy.strausz.model.Users;
+import sk.itsovy.strausz.repository.AddressesRepository;
 import sk.itsovy.strausz.repository.UserRepository;
 
 import java.sql.PreparedStatement;
@@ -22,6 +23,9 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+
+    @Autowired
+    private AddressesRepository addressesRepository;
 
 
 
@@ -54,18 +58,15 @@ public class UserController {
 
             System.out.println("BODY: \n" + body);
             JSONObject json = new JSONObject(body);
-            response = new JSONObject();
 
 
-                user.setUsername(json.getString("username"));
-                user.setPassword(json.getString("password"));
-                user.setEmail(json.getString("email"));
                 user.setId(json.getInt("id"));
+                user.setPassword(json.getString("password"));
 
 
-                if(userRepository.checkUsername(user.getUsername())) {
-                    if (userRepository.checkEmail(user.getEmail())) {
+
                         boolean check = userRepository.updateUser(user);
+            System.out.println(check);
                         if (check) {
 
 
@@ -74,22 +75,12 @@ public class UserController {
 
 
                         }
-                    } else {
-                        response.put("error", "Email already exists");
-                        return ResponseEntity.status(400).body(response.toString());
-                    }
-                }
-                else {
-                    response.put("error", "Username already exists");
-                    return ResponseEntity.status(400).body(response.toString());
-                }
 
 
 
         } catch (Exception e) {
             e.printStackTrace();
-            response.put("error", "User not created");
-            return ResponseEntity.status(400).body(response.toString());
+
         }
 
             response.put("error", "Username, password or email is missing");
@@ -164,7 +155,7 @@ public class UserController {
                     boolean check = userRepository.deleteUser(user);
                     if (check) {
 
-
+                        addressesRepository.deleteAddress(user.getId());
                         response.put("success", "User deleted");
                         return ResponseEntity.status(200).body(response.toString());
 
