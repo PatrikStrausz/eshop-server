@@ -17,12 +17,13 @@ import java.util.Random;
 public class UserRepository {
 
     public List<Users> getAllUsers() {
+        Database database = new Database();
         Users user;
 
         List<Users> users = new ArrayList<>();
 
         try {
-            PreparedStatement statement = Database.getConnection().prepareStatement("select * from users");
+            PreparedStatement statement = database.getConnection().prepareStatement("select * from users");
             ResultSet rs = statement.executeQuery();
 
 
@@ -37,7 +38,7 @@ public class UserRepository {
                 users.add(user);
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -48,12 +49,12 @@ public class UserRepository {
 
 
     public Users getUserById(int id) {
-
+        Database database = new Database();
         Users user = new Users();
 
         try {
 
-            PreparedStatement statement = Database.getConnection().prepareStatement("select * from users where id = ?");
+            PreparedStatement statement = database.getConnection().prepareStatement("select * from users where id = ?");
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
@@ -64,7 +65,7 @@ public class UserRepository {
                 user.setRole(rs.getInt("role"));
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -73,12 +74,12 @@ public class UserRepository {
 
 
     public Users getUserByUsername(String username) {
-
+        Database database = new Database();
         Users user = new Users();
 
         try {
 
-            PreparedStatement statement = Database.getConnection().prepareStatement("select * from users where username =  ?");
+            PreparedStatement statement = database.getConnection().prepareStatement("select * from users where username =  ?");
             statement.setString(1, username);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
@@ -89,7 +90,7 @@ public class UserRepository {
                 user.setRole(rs.getInt("role"));
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -98,9 +99,10 @@ public class UserRepository {
 
 
     public boolean registerUser(Users user) {
+        Database database = new Database();
         try {
 
-            PreparedStatement statement = Database.getConnection().prepareStatement(
+            PreparedStatement statement = database.getConnection().prepareStatement(
                     "INSERT INTO `users`( `username`, `password`, `email`, `role`,`token`) VALUES (?,?,?,?,?)");
 
 
@@ -120,7 +122,7 @@ public class UserRepository {
                 return true;
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -130,9 +132,10 @@ public class UserRepository {
 
 
     public boolean updateUser(Users user) {
+        Database database = new Database();
         try {
 
-            PreparedStatement statement = Database.getConnection().prepareStatement(
+            PreparedStatement statement = database.getConnection().prepareStatement(
                     "update users set password =? where id = ?");
 
 
@@ -153,7 +156,7 @@ public class UserRepository {
                 return true;
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -182,9 +185,10 @@ public class UserRepository {
     }
 
     public boolean deleteUser(Users user) {
+        Database database = new Database();
         try {
 
-            PreparedStatement statement = Database.getConnection().prepareStatement(
+            PreparedStatement statement = database.getConnection().prepareStatement(
                     "delete from users where id =? and password =?");
 
 
@@ -200,7 +204,7 @@ public class UserRepository {
 
                 return true;
             }
-            Database.getConnection().close();
+            database.getConnection().close();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -221,9 +225,10 @@ public class UserRepository {
 
 
     public void logout(String username) {
+        Database database = new Database();
         try {
 
-            PreparedStatement statement = Database.getConnection().prepareStatement(
+            PreparedStatement statement = database.getConnection().prepareStatement(
                     "update users set token = ?  where username =?");
 
 
@@ -238,7 +243,7 @@ public class UserRepository {
 
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -256,10 +261,11 @@ public class UserRepository {
 
 
     public boolean checkUsername(String login) {
+        Database database = new Database();
 
         try {
             final String queryCheck = "SELECT count(*) from users WHERE username = ?";
-            final PreparedStatement ps = Database.getConnection().prepareStatement(queryCheck);
+            final PreparedStatement ps = database.getConnection().prepareStatement(queryCheck);
             ps.setString(1, login);
             final ResultSet resultSet = ps.executeQuery();
             if (resultSet.next()) {
@@ -272,7 +278,7 @@ public class UserRepository {
                     return true;
                 }
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -283,10 +289,10 @@ public class UserRepository {
 
 
     public boolean checkPassword(String password, String username) {
-
+        Database database = new Database();
         try {
             final String queryCheck = "SELECT count(*) from users WHERE password = ? and username =?";
-            final PreparedStatement ps = Database.getConnection().prepareStatement(queryCheck);
+            final PreparedStatement ps = database.getConnection().prepareStatement(queryCheck);
             ps.setString(1, password);
             ps.setString(2, username);
             final ResultSet resultSet = ps.executeQuery();
@@ -303,21 +309,22 @@ public class UserRepository {
                     return false;
                 }
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         } catch (Exception e) {
             e.printStackTrace();
 
         }
+
         return false;
 
     }
 
 
     public boolean checkEmail(String email) {
-
+        Database database = new Database();
         try {
             final String queryCheck = "SELECT count(*) from users WHERE email = ?";
-            final PreparedStatement ps = Database.getConnection().prepareStatement(queryCheck);
+            final PreparedStatement ps = database.getConnection().prepareStatement(queryCheck);
             ps.setString(1, email);
             final ResultSet resultSet = ps.executeQuery();
             if (resultSet.next()) {
@@ -332,7 +339,7 @@ public class UserRepository {
                     return true;
                 }
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -342,10 +349,10 @@ public class UserRepository {
     }
 
     public boolean checkToken(String token) {
-
+        Database database = new Database();
         try {
             final String queryCheck = "SELECT count(*) from users WHERE token = ?";
-            final PreparedStatement ps = Database.getConnection().prepareStatement(queryCheck);
+            final PreparedStatement ps = database.getConnection().prepareStatement(queryCheck);
             ps.setString(1, token);
             final ResultSet resultSet = ps.executeQuery();
             if (resultSet.next()) {
@@ -358,7 +365,7 @@ public class UserRepository {
                     return false;
                 }
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         } catch (Exception e) {
             e.printStackTrace();
 

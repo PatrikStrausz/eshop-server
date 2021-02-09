@@ -16,18 +16,21 @@ public class Database {
     public static final String ROOT = "root";
     public static final String PASSWORD = "";
 
+    private static Connection connection;
 
 
     public static void main(String[] args) {
         SpringApplication.run(Database.class, args);
     }
 
-    public static Connection getConnection() throws SQLException {
+    public  Connection getConnection() throws SQLException {
 
-        Connection connection = DriverManager.getConnection(
+         connection = DriverManager.getConnection(
                 Database.URL, Database.ROOT, Database.PASSWORD);
 
         return connection;
     }
+
+
 
 }

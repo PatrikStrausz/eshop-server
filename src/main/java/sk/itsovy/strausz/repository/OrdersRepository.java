@@ -19,11 +19,11 @@ import java.util.List;
 public class OrdersRepository {
     public List<Orders> getAllOrders() {
         Orders order;
-
+        Database database = new Database();
        List<Orders> ordersList = new ArrayList<>();
 
         try{
-            PreparedStatement statement = Database.getConnection().prepareStatement("select * from orders");
+            PreparedStatement statement = database.getConnection().prepareStatement("select * from orders");
             ResultSet rs = statement.executeQuery();
 
 
@@ -41,7 +41,7 @@ public class OrdersRepository {
                 ordersList.add(order);
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         }catch (SQLException e) {
             e.printStackTrace();
         }
@@ -52,12 +52,13 @@ public class OrdersRepository {
 
 
     public List<Orders> getAllOrdersByUsername(String username) {
+        Database database = new Database();
         Orders order;
 
         List<Orders> ordersList = new ArrayList<>();
 
         try{
-            PreparedStatement statement = Database.getConnection().prepareStatement("select * from orders where username = ?");
+            PreparedStatement statement = database.getConnection().prepareStatement("select * from orders where username = ?");
 
             statement.setString(1, username);
 
@@ -78,7 +79,7 @@ public class OrdersRepository {
                 ordersList.add(order);
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         }catch (SQLException e) {
             e.printStackTrace();
         }
@@ -89,11 +90,12 @@ public class OrdersRepository {
 
 
     public Orders getOrdersById(int id) {
+        Database database = new Database();
         Orders order = new Orders();
 
         try {
 
-            PreparedStatement statement = Database.getConnection().prepareStatement("select * from orders where id = ?");
+            PreparedStatement statement = database.getConnection().prepareStatement("select * from orders where id = ?");
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
@@ -112,7 +114,7 @@ public class OrdersRepository {
 
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         } catch (SQLException  e) {
             e.printStackTrace();
         }
@@ -120,12 +122,13 @@ public class OrdersRepository {
     }
 
     public boolean createOrder(Orders order, List<Products> products, String username){
+        Database database = new Database();
       try{
 
-          PreparedStatement statement = Database.getConnection().prepareStatement(
+          PreparedStatement statement = database.getConnection().prepareStatement(
                   "insert into orders(user_id, order_created,username, total, state) VALUES (?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 
-          PreparedStatement statement2 = Database.getConnection().prepareStatement(
+          PreparedStatement statement2 = database.getConnection().prepareStatement(
                   "INSERT INTO `orders_details`( `order_id`, `product_id`, `quantity`) VALUES (?,?,?)");
 
 
@@ -174,7 +177,7 @@ public class OrdersRepository {
               }
           }
 
-          Database.getConnection().close();
+          database.getConnection().close();
 
       }catch (SQLException e) {
           e.printStackTrace();
@@ -184,9 +187,10 @@ public class OrdersRepository {
 
 
     public boolean updateOrder(Orders order) {
+        Database database = new Database();
         try {
 
-            PreparedStatement statement = Database.getConnection().prepareStatement(
+            PreparedStatement statement = database.getConnection().prepareStatement(
                     "update orders set state = ? where id = ?");
 
 
@@ -204,7 +208,7 @@ public class OrdersRepository {
                 return true;
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
 
         } catch (SQLException e) {
             e.printStackTrace();

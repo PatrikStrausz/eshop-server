@@ -18,12 +18,13 @@ import java.util.List;
 public class CategoriesRepository {
 
     public List<Categories> getAllCategories() {
+        Database database = new Database();
         Categories categorie;
 
         List<Categories> categoriesList = new ArrayList<>();
 
         try{
-            PreparedStatement statement = Database.getConnection().prepareStatement("select * from categories");
+            PreparedStatement statement = database.getConnection().prepareStatement("select * from categories");
             ResultSet rs = statement.executeQuery();
 
 
@@ -39,7 +40,7 @@ public class CategoriesRepository {
 
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         }catch (SQLException e) {
             e.printStackTrace();
         }
@@ -49,11 +50,12 @@ public class CategoriesRepository {
     }
 
     public Categories getCategoriesById(int id) {
+        Database database = new Database();
         Categories categorie = new Categories();
 
         try {
 
-            PreparedStatement statement = Database.getConnection().prepareStatement("select * from categories where id = ?");
+            PreparedStatement statement = database.getConnection().prepareStatement("select * from categories where id = ?");
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
@@ -63,7 +65,7 @@ public class CategoriesRepository {
 
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

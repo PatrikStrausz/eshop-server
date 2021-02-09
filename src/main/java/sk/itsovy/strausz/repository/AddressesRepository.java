@@ -19,12 +19,13 @@ public class AddressesRepository {
 
 
     public List<Addresses> getAllAddresses(){
+        Database database = new Database();
         Addresses address;
 
         List<Addresses> addressList = new ArrayList<>();
 
         try{
-            PreparedStatement statement = Database.getConnection().prepareStatement("select * from addresses");
+            PreparedStatement statement = database.getConnection().prepareStatement("select * from addresses");
             ResultSet rs = statement.executeQuery();
 
 
@@ -42,7 +43,7 @@ public class AddressesRepository {
                 addressList.add(address);
 
             }
-            Database.getConnection().close();
+           database.getConnection().close();
         }catch (SQLException e) {
             e.printStackTrace();
         }
@@ -53,12 +54,13 @@ public class AddressesRepository {
 
 
     public  Addresses getAddressById(int id){
-        Addresses address = new Addresses();;
+        Database database = new Database();
+        Addresses address = new Addresses();
 
 
 
         try{
-            PreparedStatement statement = Database.getConnection().prepareStatement("select * from addresses where id =?");
+            PreparedStatement statement = database.getConnection().prepareStatement("select * from addresses where id =?");
            statement.setInt(1,id);
 
             ResultSet rs = statement.executeQuery();
@@ -77,7 +79,7 @@ public class AddressesRepository {
 
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         }catch (SQLException e) {
             e.printStackTrace();
         }
@@ -88,12 +90,13 @@ public class AddressesRepository {
 
 
     public  Addresses getAddressByUserId(int id){
-        Addresses address = new Addresses();;
+        Addresses address = new Addresses();
+        Database database = new Database();
 
 
 
         try{
-            PreparedStatement statement = Database.getConnection().prepareStatement("select * from addresses where user_id =?");
+            PreparedStatement statement = database.getConnection().prepareStatement("select * from addresses where user_id =?");
             statement.setInt(1,id);
 
             ResultSet rs = statement.executeQuery();
@@ -112,7 +115,7 @@ public class AddressesRepository {
 
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         }catch (SQLException e) {
             e.printStackTrace();
         }
@@ -123,14 +126,14 @@ public class AddressesRepository {
 
 
     public boolean updateUserAddress(Addresses address){
-
+        Database database = new Database();
 
 
 
         try{
-            PreparedStatement statement = Database.getConnection().prepareStatement("update addresses set line1 =?, city =?, state = ?,country =?, phone = ?, pincode = ?, user_id =?  where user_id = ?");
+            PreparedStatement statement = database.getConnection().prepareStatement("update addresses set line1 =?, city =?, state = ?,country =?, phone = ?, pincode = ?, user_id =?  where user_id = ?");
 
-            PreparedStatement statement1 = Database.getConnection().prepareStatement("insert into addresses(line1,city,state,country,phone,pincode,user_id) values(?,?,?,?,?,?,?)");
+            PreparedStatement statement1 = database.getConnection().prepareStatement("insert into addresses(line1,city,state,country,phone,pincode,user_id) values(?,?,?,?,?,?,?)");
 
 
             statement.setString(1,address.getLine1());
@@ -172,7 +175,7 @@ public class AddressesRepository {
                 return true;
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
 
         }catch (SQLException e) {
             e.printStackTrace();
@@ -182,8 +185,9 @@ public class AddressesRepository {
     }
 
     public boolean deleteAddress(int user_id){
+        Database database = new Database();
         try{
-            PreparedStatement statement = Database.getConnection().prepareStatement("delete from addresses where user_id=?");
+            PreparedStatement statement = database.getConnection().prepareStatement("delete from addresses where user_id=?");
 
 
 
@@ -200,7 +204,7 @@ public class AddressesRepository {
                 return true;
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
 
         }catch (SQLException e) {
             e.printStackTrace();
@@ -211,10 +215,10 @@ public class AddressesRepository {
     }
 
     public int checkAddress(int user_id) {
-
+        Database database = new Database();
         try {
             final String queryCheck = "SELECT count(*) from addresses WHERE user_id = ?";
-            final PreparedStatement ps = Database.getConnection().prepareStatement(queryCheck);
+            final PreparedStatement ps = database.getConnection().prepareStatement(queryCheck);
             ps.setInt(1, user_id);
             final ResultSet resultSet = ps.executeQuery();
             if (resultSet.next()) {
@@ -225,7 +229,7 @@ public class AddressesRepository {
 
                return count;
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         } catch (Exception e) {
             e.printStackTrace();
 

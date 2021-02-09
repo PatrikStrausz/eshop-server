@@ -17,12 +17,13 @@ import java.util.List;
 public class ProductRepository {
 
     public List<Products> getAllProducts() {
+        Database database = new Database();
         Products product;
 
         List<Products> productsList = new ArrayList<>();
 
         try {
-            PreparedStatement statement = Database.getConnection().prepareStatement("select * from products");
+            PreparedStatement statement = database.getConnection().prepareStatement("select * from products");
             ResultSet rs = statement.executeQuery();
 
 
@@ -42,7 +43,7 @@ public class ProductRepository {
                 productsList.add(product);
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -53,11 +54,12 @@ public class ProductRepository {
 
 
     public Products getProductById(int id) {
+        Database database = new Database();
         Products product = new Products();
 
         try {
 
-            PreparedStatement statement = Database.getConnection().prepareStatement("select * from products where id = ?");
+            PreparedStatement statement = database.getConnection().prepareStatement("select * from products where id = ?");
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
@@ -71,7 +73,7 @@ public class ProductRepository {
                 product.setShort_desc(rs.getString("short_desc"));
                 product.setCat_id(rs.getInt("cat_id"));
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -79,11 +81,12 @@ public class ProductRepository {
     }
 
     public Categories getCategoryName(int product_id) {
+        Database database = new Database();
         Categories categorie = new Categories();
 
         try {
 
-            PreparedStatement statement = Database.getConnection().prepareStatement("select * from categories inner join products on categories.id = products.cat_id where products.id = ?");
+            PreparedStatement statement = database.getConnection().prepareStatement("select * from categories inner join products on categories.id = products.cat_id where products.id = ?");
             statement.setInt(1, product_id);
             ResultSet rs = statement.executeQuery();
 
@@ -95,7 +98,7 @@ public class ProductRepository {
                 categorie.setTitle(rs.getString("title"));
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -105,12 +108,13 @@ public class ProductRepository {
 
 
     public List<Products> getProductsByCategory(int id) {
+        Database database = new Database();
         Products product;
 
         List<Products> productsList = new ArrayList<>();
 
         try {
-            PreparedStatement statement = Database.getConnection().prepareStatement("select * from products where cat_id = ?");
+            PreparedStatement statement = database.getConnection().prepareStatement("select * from products where cat_id = ?");
 
             statement.setInt(1, id);
 
@@ -133,7 +137,7 @@ public class ProductRepository {
                 productsList.add(product);
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -144,12 +148,13 @@ public class ProductRepository {
 
 
     public List<Products> getProductsByTitle(String title) {
+        Database database = new Database();
         Products product;
 
         List<Products> productsList = new ArrayList<>();
 
         try {
-            PreparedStatement statement = Database.getConnection().prepareStatement("select * from products where title like ?");
+            PreparedStatement statement = database.getConnection().prepareStatement("select * from products where title like ?");
 
             statement.setString(1, title+"%");
 
@@ -172,7 +177,7 @@ public class ProductRepository {
                 productsList.add(product);
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -185,9 +190,10 @@ public class ProductRepository {
 
 
     public boolean deleteProduct(Products product) {
+        Database database = new Database();
         try {
 
-            PreparedStatement statement = Database.getConnection().prepareStatement(
+            PreparedStatement statement = database.getConnection().prepareStatement(
                     "delete from products where id =? ");
 
 
@@ -202,7 +208,7 @@ public class ProductRepository {
 
                 return true;
             }
-            Database.getConnection().close();
+            database.getConnection().close();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -212,9 +218,10 @@ public class ProductRepository {
     }
 
     public boolean updateProduct(Products product) {
+        Database database = new Database();
         try{
 
-            PreparedStatement statement = Database.getConnection().prepareStatement(
+            PreparedStatement statement = database.getConnection().prepareStatement(
                     "update products set title =?, image =?, images =? , description = ?, price =?, quantity=?, short_desc=?where id = ?");
 
 
@@ -246,7 +253,7 @@ public class ProductRepository {
                 return true;
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
 
         }catch (SQLException e) {
             e.printStackTrace();
@@ -256,9 +263,10 @@ public class ProductRepository {
 
 
     public boolean createProduct(Products product){
+        Database database = new Database();
         try {
 
-            PreparedStatement statement = Database.getConnection().prepareStatement(
+            PreparedStatement statement = database.getConnection().prepareStatement(
                     "INSERT INTO `products`( title,image,images, description, price,quantity, short_desc, cat_id) VALUES (?,?,?,?,?,?,?,?)");
 
 
@@ -281,7 +289,7 @@ public class ProductRepository {
                 return true;
 
             }
-            Database.getConnection().close();
+            database.getConnection().close();
 
         } catch (SQLException e) {
             e.printStackTrace();

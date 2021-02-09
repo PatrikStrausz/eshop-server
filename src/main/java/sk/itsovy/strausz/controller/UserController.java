@@ -237,6 +237,8 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody String body) {
+
+        Database database = new Database();
         JSONObject response = new JSONObject();
         Users user = new Users();
 
@@ -265,7 +267,7 @@ public class UserController {
                         user.setToken(token);
 
 
-                        PreparedStatement statement = Database.getConnection().prepareStatement(
+                        PreparedStatement statement = database.getConnection().prepareStatement(
                                 "update users set token = ? where password = ? and username =?");
 
                         statement.setString(1, user.getToken());
